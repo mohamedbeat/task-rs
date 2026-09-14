@@ -33,7 +33,7 @@ export function AppTabs() {
                 </TabsList>
             </Tabs>
 
-            <div className="m-2 h-full">
+            <div className={` m-2 h-[90%] `}>
                 {activeTab === "processes" && <Processes />}
                 {activeTab === "usage" && <Usage />}
                 {activeTab === "settings" && <Settings />}
