@@ -3,7 +3,6 @@ pub mod icon;
 pub mod usage;
 
 mod processes;
-use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, sync::Mutex, time::Duration};
 use sysinfo::{self, Disks};
 use tauri::{Emitter, Manager};
@@ -52,6 +51,7 @@ pub fn start_monitoring_stats(app: tauri::AppHandle) {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_clipboard_manager::init())
         .manage(processes::SysState {
             sys: Mutex::new(sysinfo::System::new_all()),

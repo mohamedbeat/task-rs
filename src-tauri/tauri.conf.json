@@ -13,6 +13,7 @@
     "windows": [
       {
         "title": "task-rs",
+        "alwaysOnTop": true,
         "width": 800,
         "height": 600
       }

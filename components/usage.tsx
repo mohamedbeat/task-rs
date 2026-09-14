@@ -13,7 +13,7 @@ export function Usage() {
         <div className="h-[87%]" >
             <h1 className="font-semibold text-2xl flex-1">Usage</h1>
 
-            <div className="grid grid-cols-2 gap-9 w-full h-full">
+            <div className=" grid grid-cols-1 sm:grid-cols-2 gap-9 w-full h-full">
                 <div className="flex flex-col items-center justify-center">
                     <h1 className="font-semibold text-xl">Memory</h1>
                     <MemoryStick size={40} />
