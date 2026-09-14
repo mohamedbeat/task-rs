@@ -13,6 +13,7 @@ pub struct SystemStats {
     // CPU
     pub cpu_percent: f32,
     pub cpu_per_core: Vec<f32>,
+    pub cpu_name: String,
 
     // Disk
     pub disks: Vec<DiskInfo>,
@@ -72,6 +73,11 @@ pub fn get_system_stats(sys: &System, disks: &Disks) -> SystemStats {
         } else {
             0.0
         },
+        cpu_name: sys
+            .cpus()
+            .first()
+            .map(|c| c.brand().trim().to_string())
+            .unwrap_or_else(|| "Unknown Cpu".to_string()),
         cpu_percent: sys.global_cpu_usage(),
         cpu_per_core: sys.cpus().iter().map(|c| c.cpu_usage()).collect(),
         disks: disk_list,

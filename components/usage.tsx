@@ -8,6 +8,7 @@ type SystemStats = {
     memory_total_gb: number
     memory_percent: number
 
+    cpu_name: string
     cpu_percent: number
     cpu_per_core: number[]
 
@@ -31,6 +32,7 @@ type DiskInfo = {
 
 export function Usage() {
     const [stats, setStats] = useState<SystemStats>({
+        cpu_name: "",
         cpu_per_core: [0],
         cpu_percent: 0,
         memory_percent: 0,
@@ -66,6 +68,7 @@ export function Usage() {
                     <Tooltip >
                         <TooltipTrigger className="flex flex-col items-center justify-center">
                             <Cpu />
+                            <h1>{stats.cpu_name}</h1>
                             <h1>{stats.cpu_percent.toFixed(1)} %</h1>
 
 
