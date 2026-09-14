@@ -1,10 +1,6 @@
-pub mod dxgi;
+pub mod gpu;
 pub mod icon;
-pub mod luid;
-pub mod nvml_gpu;
-pub mod pdh;
 pub mod usage;
-pub mod wmi_gpu;
 
 mod processes;
 use serde::{Deserialize, Serialize};
@@ -17,19 +13,34 @@ pub fn start_monitoring(app: tauri::AppHandle) {
     std::thread::spawn(move || {
         let mut sys = sysinfo::System::new_all();
 
+        loop {
+            {
+                sys.refresh_cpu_usage();
+                sys.refresh_memory();
+                let state = app.state::<processes::SysState>();
+                let mut icon_cache = state.icon_cache.lock().unwrap();
+                sys.refresh_processes(sysinfo::ProcessesToUpdate::All, true);
+                let list = processes::get_process_list(&sys, &mut icon_cache);
+                // sys (the MutexGuard) drops here at end of block, before emit
+                let _ = app.emit("processes-update", &list);
+            }
+            std::thread::sleep(Duration::from_secs(1));
+        }
+    });
+}
+
+pub fn start_monitoring_stats(app: tauri::AppHandle) {
+    std::thread::spawn(move || {
+        let mut sys = sysinfo::System::new_all();
+
         let mut disks = Disks::new_with_refreshed_list();
         loop {
             {
                 sys.refresh_cpu_usage();
                 sys.refresh_memory();
                 disks.refresh(true);
-                let state = app.state::<processes::SysState>();
-                let mut icon_cache = state.icon_cache.lock().unwrap();
-                sys.refresh_processes(sysinfo::ProcessesToUpdate::All, true);
-                let list = processes::get_process_list(&sys, &mut icon_cache);
                 let stats = usage::get_system_stats(&sys, &disks);
                 // sys (the MutexGuard) drops here at end of block, before emit
-                let _ = app.emit("processes-update", &list);
                 let _ = app.emit("stats", &stats);
             }
             std::thread::sleep(Duration::from_secs(3));
@@ -47,7 +58,8 @@ pub fn run() {
         })
         .setup(|app| {
             let handle = app.handle().clone();
-            start_monitoring(handle);
+            start_monitoring(handle.clone());
+            start_monitoring_stats(handle);
             Ok(())
         })
         .plugin(tauri_plugin_opener::init())

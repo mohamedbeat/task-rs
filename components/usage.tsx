@@ -2,55 +2,13 @@ import { listen } from "@tauri-apps/api/event"
 import { Cpu, Gpu, HardDrive, MemoryStick } from "lucide-react"
 import React, { useState } from "react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
+import { useStatsStore } from "../context/usage-context"
 
-type SystemStats = {
-    memory_used_gb: number
-    memory_total_gb: number
-    memory_percent: number
 
-    cpu_name: string
-    cpu_percent: number
-    cpu_per_core: number[]
-
-    disks: DiskInfo[]
-    gpu: GpuInfo[]
-}
-
-type GpuInfo = {
-    name: string
-    usage_percent: number
-    memory_used_gb: number
-    memory_total_gb: number
-}
-
-type DiskInfo = {
-    name: string
-    used_gb: number
-    total_gb: number
-    percent: number
-}
 
 export function Usage() {
-    const [stats, setStats] = useState<SystemStats>({
-        cpu_name: "",
-        cpu_per_core: [0],
-        cpu_percent: 0,
-        memory_percent: 0,
-        memory_total_gb: 0,
-        memory_used_gb: 100,
-        disks: [{ name: '', percent: 0, total_gb: 0, used_gb: 0 }],
-        gpu: [{ memory_total_gb: 0, memory_used_gb: 0, name: "", usage_percent: 0 }]
-    })
-    React.useEffect(() => {
-        const unlisten = listen<SystemStats>("stats", (e) => {
-            setStats(e.payload)
-            console.log(e.payload.gpu)
-        })
+    const stats = useStatsStore((s) => s.stats)
 
-        return () => {
-            unlisten.then((fn) => fn());
-        }
-    }, [])
     return (
 
 

@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use sysinfo::{Disks, System};
 
-use crate::{dxgi, nvml_gpu, pdh, wmi_gpu};
+use crate::gpu::{dxgi, nvml_gpu, pdh};
 
 #[derive(Serialize, Clone)]
 pub struct SystemStats {

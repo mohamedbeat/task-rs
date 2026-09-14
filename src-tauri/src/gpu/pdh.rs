@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use windows::core::PCWSTR;
 use windows::Win32::System::Performance::*;
 
-use crate::luid;
+use crate::gpu::luid;
 
 fn to_wide(s: &str) -> Vec<u16> {
     s.encode_utf16().chain(std::iter::once(0)).collect()
